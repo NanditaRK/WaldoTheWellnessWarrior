@@ -1,7 +1,7 @@
 import logging
 import asyncio
 from dotenv import load_dotenv
-
+import os
 from prompts import AGENT_INSTRUCTIONS
 
 from livekit.agents import (
@@ -32,7 +32,9 @@ vectorstore = FAISS.load_local("webmd_faiss_langchain", embeddings, allow_danger
 retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
 
 call_transcripts = []
-load_dotenv(dotenv_path=".env.local")
+if not os.environ.get("LIVEKIT_API_KEY"):  # or whichever key you always expect
+    load_dotenv(dotenv_path=".env.local")
+
 logger = logging.getLogger("voice-agent")
 
 
