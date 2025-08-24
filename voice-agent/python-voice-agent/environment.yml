@@ -1,0 +1,29 @@
+name: voice-agent
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy=1.24
+  - scipy=1.10
+  - scikit-learn=1.2
+  - faiss-cpu=1.7.4
+  - pip:
+      - livekit-agents
+      - livekit-plugins-cartesia
+      - livekit-plugins-google
+      - livekit-plugins-deepgram
+      - livekit-plugins-silero
+      - livekit-plugins-turn-detector
+      - livekit-plugins-noise-cancellation
+
+      - langchain
+      - langchain-community
+      - sentence-transformers
+
+      - datasets
+      - tqdm
+
+      
+      - python-dotenv

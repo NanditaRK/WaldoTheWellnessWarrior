@@ -1,0 +1,19 @@
+livekit-agents~=1.0
+livekit-plugins-google~=1.0
+livekit-plugins-cartesia~=1.0
+livekit-plugins-deepgram~=1.0
+livekit-plugins-silero~=1.0
+#optional only rlly used for the turn detection model
+livekit-plugins-turn-detector~=1.0
+#again optional for the background voice and noise cancellation
+livekit-plugins-noise-cancellation>=0.2.0,<1.0.0
+langchain
+langchain-community
+faiss-cpu
+sentence-transformers
+datasets
+tqdm
+numpy<2
+scikit-learn
+scipy<1.12
+python-dotenv
