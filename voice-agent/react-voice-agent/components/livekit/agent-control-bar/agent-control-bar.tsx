@@ -1,23 +1,38 @@
-'use client';
+/* eslint-disable import/named */
+"use client";
 
-import * as React from 'react';
-import { useCallback, useEffect } from 'react';
-import { Track } from 'livekit-client';
-import { BarVisualizer, TextStreamData, useRemoteParticipants, useTranscriptions } from '@livekit/components-react';
-import { ChatTextIcon, PhoneDisconnectIcon } from '@phosphor-icons/react/dist/ssr';
-import { ChatInput } from '@/components/livekit/chat/chat-input';
-import { Button } from '@/components/ui/button';
-import { Toggle } from '@/components/ui/toggle';
-import { AppConfig } from '@/lib/types';
-import { cn } from '@/lib/utils';
-import { DeviceSelect } from '../device-select';
-import { TrackToggle } from '../track-toggle';
-import { UseAgentControlBarProps, useAgentControlBar } from './hooks/use-agent-control-bar';
-import { useSession } from 'next-auth/react';
+import * as React from "react";
+import { useCallback, useEffect } from "react";
+import { Track } from "livekit-client";
+import {
+  BarVisualizer,
+  TextStreamData,
+  useRemoteParticipants,
+  useTranscriptions,
+} from "@livekit/components-react";
+import {
+  ChatTextIcon,
+  PhoneDisconnectIcon,
+} from "@phosphor-icons/react/dist/ssr";
+import { ChatInput } from "@/components/livekit/chat/chat-input";
+import { Button } from "@/components/ui/button";
+import { Toggle } from "@/components/ui/toggle";
+import { AppConfig } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { DeviceSelect } from "../device-select";
+import { TrackToggle } from "../track-toggle";
+import {
+  UseAgentControlBarProps,
+  useAgentControlBar,
+} from "./hooks/use-agent-control-bar";
+import { useSession } from "next-auth/react";
 export interface AgentControlBarProps
   extends React.HTMLAttributes<HTMLDivElement>,
     UseAgentControlBarProps {
-  capabilities: Pick<AppConfig, 'supportsChatInput' | 'supportsVideoInput' | 'supportsScreenShare'>;
+  capabilities: Pick<
+    AppConfig,
+    "supportsChatInput" | "supportsVideoInput" | "supportsScreenShare"
+  >;
   onChatOpenChange?: (open: boolean) => void;
   onSendMessage?: (message: string) => Promise<void>;
   onDisconnect?: () => void;
@@ -46,11 +61,10 @@ export function AgentControlBar({
   const isInputDisabled = !chatOpen || !isAgentAvailable || isSendingMessage;
 
   const [isDisconnecting, setIsDisconnecting] = React.useState(false);
-  const transcriptions:TextStreamData[] = useTranscriptions();  
-  const session = useSession()
-  const userId = session.data?.user?.id
-  
-  
+  const transcriptions: TextStreamData[] = useTranscriptions();
+  const session = useSession();
+  const userId = session.data?.user?.id;
+
   const {
     micTrackRef,
     visibleControls,
@@ -78,82 +92,72 @@ export function AgentControlBar({
   //   const call = await fetch()
   // }
 
-   
-  const handleTranscriptions = async (transcriptions:TextStreamData[]) => {
-    
+  const handleTranscriptions = async (transcriptions: TextStreamData[]) => {
     const fullTranscript = transcriptions
-      .map((transcription) => transcription.text) 
-      .join(' ');  
+      .map((transcription) => transcription.text)
+      .join(" ");
 
-      //line to just put summary if nothing discussed 
+    //line to just put summary if nothing discussed
     if (fullTranscript.length < 100) {
-    await postCallSummary("Call was too short for a summary.");
-    return;
-  }
+      await postCallSummary("Call was too short for a summary.");
+      return;
+    }
     const summary = await summarizeTranscript(fullTranscript);
 
-   
     await postCallSummary(summary);
-
-    
   };
 
- 
- const summarizeTranscript = async (transcript: string): Promise<string> => {
-  try {
-    const response = await fetch("/api/gemini", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        prompt: `You are summarizing a patient support call. 
+  const summarizeTranscript = async (transcript: string): Promise<string> => {
+    try {
+      const response = await fetch("/api/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: `You are summarizing a patient support call. 
 The transcript contains only the agent’s responses. 
 Summarize what the call was about in 1–2 sentences, focusing on the user’s health issue and the remedies or advice given.
 Transcript: """${transcript}"""`,
-      }),
-    });
+        }),
+      });
 
-    if (!response.ok) {
-      throw new Error("Failed to summarize with Gemini");
+      if (!response.ok) {
+        throw new Error("Failed to summarize with Gemini");
+      }
+
+      const data = await response.json();
+      return data.summary || "Summary unavailable.";
+    } catch (err) {
+      console.error("Error in Gemini summarization:", err);
+      const sentences = transcript.split(".").filter(Boolean);
+      return sentences.slice(0, 2).join(".") + ".";
     }
+  };
 
-    const data = await response.json();
-    return data.summary || "Summary unavailable.";
-  } catch (err) {
-    console.error("Error in Gemini summarization:", err);
-    const sentences = transcript.split(".").filter(Boolean);
-    return sentences.slice(0, 2).join(".") + ".";
-  }
-};
-
-
-  
   const postCallSummary = async (summary: string) => {
     try {
-      
-      const response = await fetch('/api/calls', {
-        method: 'POST',
+      const response = await fetch("/api/calls", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ userId, summary }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save call summary');
+        throw new Error("Failed to save call summary");
       }
 
       const data = await response.json();
-      console.log('Call summary saved:', data);
+      console.log("Call summary saved:", data);
     } catch (error) {
-      console.error('Error posting call summary:', error);
+      console.error("Error posting call summary:", error);
     }
   };
-
 
   const onLeave = async () => {
     setIsDisconnecting(true);
     await handleDisconnect();
-    await handleTranscriptions(transcriptions);  
+    await handleTranscriptions(transcriptions);
     setIsDisconnecting(false);
     onDisconnect?.();
   };
@@ -166,21 +170,21 @@ Transcript: """${transcript}"""`,
     (error: Error) => {
       onDeviceError?.({ source: Track.Source.Microphone, error });
     },
-    [onDeviceError]
+    [onDeviceError],
   );
   const onCameraDeviceSelectError = useCallback(
     (error: Error) => {
       onDeviceError?.({ source: Track.Source.Camera, error });
     },
-    [onDeviceError]
+    [onDeviceError],
   );
 
   return (
     <div
       aria-label="Voice assistant controls"
       className={cn(
-        'bg-background border-bg2 dark:border-separator1 flex flex-col rounded-[31px] border p-3 drop-shadow-md/3',
-        className
+        "bg-background border-bg2 dark:border-separator1 flex flex-col rounded-[31px] border p-3 drop-shadow-md/3",
+        className,
       )}
       {...props}
     >
@@ -188,12 +192,16 @@ Transcript: """${transcript}"""`,
         <div
           inert={!chatOpen}
           className={cn(
-            'overflow-hidden transition-[height] duration-300 ease-out',
-            chatOpen ? 'h-[57px]' : 'h-0'
+            "overflow-hidden transition-[height] duration-300 ease-out",
+            chatOpen ? "h-[57px]" : "h-0",
           )}
         >
           <div className="flex h-8 w-full">
-            <ChatInput onSend={handleSendMessage} disabled={isInputDisabled} className="w-full" />
+            <ChatInput
+              onSend={handleSendMessage}
+              disabled={isInputDisabled}
+              className="w-full"
+            />
           </div>
           <hr className="border-bg2 my-3" />
         </div>
@@ -219,9 +227,9 @@ Transcript: """${transcript}"""`,
                 >
                   <span
                     className={cn([
-                      'h-full w-0.5 origin-center rounded-2xl',
-                      'group-data-[state=on]/track:bg-fg1 group-data-[state=off]/track:bg-destructive-foreground',
-                      'data-lk-muted:bg-muted',
+                      "h-full w-0.5 origin-center rounded-2xl",
+                      "group-data-[state=on]/track:bg-fg1 group-data-[state=off]/track:bg-destructive-foreground",
+                      "data-lk-muted:bg-muted",
                     ])}
                   ></span>
                 </BarVisualizer>
@@ -233,11 +241,11 @@ Transcript: """${transcript}"""`,
                 onMediaDeviceError={onMicrophoneDeviceSelectError}
                 onActiveDeviceChange={handleAudioDeviceChange}
                 className={cn([
-                  'pl-2',
-                  'peer-data-[state=off]/track:text-destructive-foreground',
-                  'hover:text-fg1 focus:text-fg1',
-                  'hover:peer-data-[state=off]/track:text-destructive-foreground focus:peer-data-[state=off]/track:text-destructive-foreground',
-                  'hidden rounded-l-none md:block',
+                  "pl-2",
+                  "peer-data-[state=off]/track:text-destructive-foreground",
+                  "hover:text-fg1 focus:text-fg1",
+                  "hover:peer-data-[state=off]/track:text-destructive-foreground focus:peer-data-[state=off]/track:text-destructive-foreground",
+                  "hidden rounded-l-none md:block",
                 ])}
               />
             </div>
@@ -261,11 +269,11 @@ Transcript: """${transcript}"""`,
                 onMediaDeviceError={onCameraDeviceSelectError}
                 onActiveDeviceChange={handleVideoDeviceChange}
                 className={cn([
-                  'pl-2',
-                  'peer-data-[state=off]/track:text-destructive-foreground',
-                  'hover:text-fg1 focus:text-fg1',
-                  'hover:peer-data-[state=off]/track:text-destructive-foreground focus:peer-data-[state=off]/track:text-destructive-foreground',
-                  'rounded-l-none',
+                  "pl-2",
+                  "peer-data-[state=off]/track:text-destructive-foreground",
+                  "hover:text-fg1 focus:text-fg1",
+                  "hover:peer-data-[state=off]/track:text-destructive-foreground focus:peer-data-[state=off]/track:text-destructive-foreground",
+                  "rounded-l-none",
                 ])}
               />
             </div>

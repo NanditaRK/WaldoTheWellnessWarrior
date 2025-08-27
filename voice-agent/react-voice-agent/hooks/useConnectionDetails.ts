@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
-import { decodeJwt } from 'jose';
-import { ConnectionDetails } from '@/app/api/connection-details/route';
+import { useCallback, useEffect, useState } from "react";
+import { decodeJwt } from "jose";
+import { ConnectionDetails } from "@/app/api/connection-details/route";
 
 const ONE_MINUTE_IN_MILLISECONDS = 60 * 1000;
 
@@ -14,13 +14,15 @@ export default function useConnectionDetails() {
   // In real-world application, you would likely allow the user to specify their
   // own participant name, and possibly to choose from existing rooms to join.
 
-  const [connectionDetails, setConnectionDetails] = useState<ConnectionDetails | null>(null);
+  const [connectionDetails, setConnectionDetails] =
+    useState<ConnectionDetails | null>(null);
 
   const fetchConnectionDetails = useCallback(async () => {
     setConnectionDetails(null);
     const url = new URL(
-      process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT ?? '/api/connection-details',
-      window.location.origin
+      process.env.NEXT_PUBLIC_CONN_DETAILS_ENDPOINT ??
+        "/api/connection-details",
+      window.location.origin,
     );
 
     let data: ConnectionDetails;
@@ -28,8 +30,8 @@ export default function useConnectionDetails() {
       const res = await fetch(url.toString());
       data = await res.json();
     } catch (error) {
-      console.error('Error fetching connection details:', error);
-      throw new Error('Error fetching connection details!');
+      console.error("Error fetching connection details:", error);
+      throw new Error("Error fetching connection details!");
     }
 
     setConnectionDetails(data);

@@ -1,15 +1,19 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import { Room, RoomEvent } from 'livekit-client';
-import { motion } from 'motion/react';
-import { RoomAudioRenderer, RoomContext, StartAudio } from '@livekit/components-react';
-import { toastAlert } from '@/components/alert-toast';
-import { SessionView } from '@/components/session-view';
-import { Toaster } from '@/components/ui/sonner';
-import { Welcome } from '@/components/welcome';
-import useConnectionDetails from '@/hooks/useConnectionDetails';
-import type { AppConfig } from '@/lib/types';
+import { useEffect, useMemo, useState } from "react";
+import { Room, RoomEvent } from "livekit-client";
+import { motion } from "motion/react";
+import {
+  RoomAudioRenderer,
+  RoomContext,
+  StartAudio,
+} from "@livekit/components-react";
+import { toastAlert } from "@/components/alert-toast";
+import { SessionView } from "@/components/session-view";
+import { Toaster } from "@/components/ui/sonner";
+import { Welcome } from "@/components/welcome";
+import useConnectionDetails from "@/hooks/useConnectionDetails";
+import type { AppConfig } from "@/lib/types";
 
 const MotionWelcome = motion.create(Welcome);
 const MotionSessionView = motion.create(SessionView);
@@ -21,7 +25,8 @@ interface AppProps {
 export function App({ appConfig }: AppProps) {
   const room = useMemo(() => new Room(), []);
   const [sessionStarted, setSessionStarted] = useState(false);
-  const { refreshConnectionDetails, existingOrRefreshConnectionDetails } = useConnectionDetails();
+  const { refreshConnectionDetails, existingOrRefreshConnectionDetails } =
+    useConnectionDetails();
 
   useEffect(() => {
     const onDisconnected = () => {
@@ -30,7 +35,7 @@ export function App({ appConfig }: AppProps) {
     };
     const onMediaDevicesError = (error: Error) => {
       toastAlert({
-        title: 'Encountered an error with your media devices',
+        title: "Encountered an error with your media devices",
         description: `${error.name}: ${error.message}`,
       });
     };
@@ -44,18 +49,21 @@ export function App({ appConfig }: AppProps) {
 
   useEffect(() => {
     let aborted = false;
-    if (sessionStarted && room.state === 'disconnected') {
+    if (sessionStarted && room.state === "disconnected") {
       Promise.all([
         room.localParticipant.setMicrophoneEnabled(true, undefined, {
           preConnectBuffer: appConfig.isPreConnectBufferEnabled,
         }),
         existingOrRefreshConnectionDetails().then((connectionDetails) =>
-          room.connect(connectionDetails.serverUrl, connectionDetails.participantToken)
+          room.connect(
+            connectionDetails.serverUrl,
+            connectionDetails.participantToken,
+          ),
         ),
       ]).catch((error) => {
         if (aborted) return;
         toastAlert({
-          title: 'There was an error connecting to the agent',
+          title: "There was an error connecting to the agent",
           description: `${error.name}: ${error.message}`,
         });
       });
@@ -77,7 +85,11 @@ export function App({ appConfig }: AppProps) {
         disabled={sessionStarted}
         initial={{ opacity: 0 }}
         animate={{ opacity: sessionStarted ? 0 : 1 }}
-        transition={{ duration: 0.5, ease: 'linear', delay: sessionStarted ? 0 : 0.5 }}
+        transition={{
+          duration: 0.5,
+          ease: "linear",
+          delay: sessionStarted ? 0 : 0.5,
+        }}
       />
 
       <RoomContext.Provider value={room}>
@@ -87,8 +99,8 @@ export function App({ appConfig }: AppProps) {
         <motion.div
           className={`fixed transition-all duration-500 ease-out ${
             sessionStarted
-              ? 'inset-0 flex items-center justify-center'
-              : 'bottom-8 right-8 w-72 z-[-5] h-48'
+              ? "inset-0 flex items-center justify-center"
+              : "bottom-8 right-8 w-72 z-[-5] h-48"
           }`}
         >
           <MotionSessionView
@@ -99,7 +111,11 @@ export function App({ appConfig }: AppProps) {
             className="w-full h-full"
             initial={{ opacity: 0 }}
             animate={{ opacity: sessionStarted ? 1 : 0 }}
-            transition={{ duration: 0.5, ease: 'linear', delay: sessionStarted ? 0.5 : 0 }}
+            transition={{
+              duration: 0.5,
+              ease: "linear",
+              delay: sessionStarted ? 0.5 : 0,
+            }}
           />
         </motion.div>
       </RoomContext.Provider>

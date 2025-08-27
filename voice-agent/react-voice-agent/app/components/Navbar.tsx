@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import { LogOutIcon } from "lucide-react"
-import { signOut, useSession } from "next-auth/react"
+import * as React from "react";
+import Link from "next/link";
+import { LogOutIcon } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,8 +12,8 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu"
-import { ThemeToggle } from "@/components/theme-toggle"
+} from "@/components/ui/navigation-menu";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -51,41 +51,43 @@ const components: { title: string; href: string; description: string }[] = [
     description:
       "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
   },
-]
+];
 
 export function Navbar() {
-  const sessionObject = useSession()
-  const session = sessionObject.data
+  const sessionObject = useSession();
+  const session = sessionObject.data;
   return (
-    <NavigationMenu  viewport={false}>
+    <NavigationMenu viewport={false}>
       <NavigationMenuList className="flex mx-8  justify-between">
         <NavigationMenuItem>
-          <Link className="text-black dark:text-primary font-bold" href={"/"}>Waldo The Wellness Warrior</Link>
-        
+          <Link className="text-black dark:text-primary font-bold" href={"/"}>
+            Waldo The Wellness Warrior
+          </Link>
         </NavigationMenuItem>
         <div className="flex  w-1/4 items-center">
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>My Profile</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[200px] gap-4">
-              <li>
-                <NavigationMenuLink asChild>
-                  <Link href="#" className="flex-row items-center gap-2">
-                    <LogOutIcon />
-                    <button onClick={() => signOut()}>Sign Out</button>
-                  </Link>
-                </NavigationMenuLink>
-              </li>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-       
-        <NavigationMenuItem>
-          <ThemeToggle />
-        </NavigationMenuItem></div>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>My Profile</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="grid w-[200px] gap-4">
+                <li>
+                  <NavigationMenuLink asChild>
+                    <Link href="#" className="flex-row items-center gap-2">
+                      <LogOutIcon />
+                      <button onClick={() => signOut()}>Sign Out</button>
+                    </Link>
+                  </NavigationMenuLink>
+                </li>
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+
+          <NavigationMenuItem>
+            <ThemeToggle />
+          </NavigationMenuItem>
+        </div>
       </NavigationMenuList>
     </NavigationMenu>
-  )
+  );
 }
 
 function ListItem({
@@ -105,5 +107,5 @@ function ListItem({
         </Link>
       </NavigationMenuLink>
     </li>
-  )
+  );
 }

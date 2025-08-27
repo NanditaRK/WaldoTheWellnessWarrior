@@ -1,23 +1,24 @@
-"use client"
-import React, { useEffect, useState } from 'react'
+"use client";
+import { Call } from "@/lib/generated/prisma";
+import React, { useEffect, useState } from "react";
 
 const PastCallsDashboard = () => {
-  const [calls, setCalls] = useState<any[]>([]); 
-  const [loading, setLoading] = useState<boolean>(true); 
-  const [error, setError] = useState<string | null>(null); 
+  const [calls, setCalls] = useState<Call[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Fetch calls on component mount
     const fetchCalls = async () => {
       try {
-        const response = await fetch('/api/calls'); 
+        const response = await fetch("/api/calls");
         if (!response.ok) {
-          throw new Error('Failed to fetch calls');
+          throw new Error("Failed to fetch calls");
         }
         const data = await response.json();
-        setCalls(data); 
+        setCalls(data);
       } catch (err) {
-        setError('Error fetching calls');
+        setError("Error fetching calls");
       } finally {
         setLoading(false);
       }
@@ -40,9 +41,11 @@ const PastCallsDashboard = () => {
 
       {calls.length > 0 ? (
         <div className="m-8">
-          {calls.map((call: any) => (
+          {calls.map((call: Call) => (
             <div key={call.id} className="mb-4">
-              <h3 className="text-black dark:text-primary font-bold text-2xl">{new Date(call.createdAt).toLocaleDateString()}</h3>
+              <h3 className="text-black dark:text-primary font-bold text-2xl">
+                {new Date(call.createdAt).toLocaleDateString()}
+              </h3>
               <p className="text-lg">{call.summary}</p>
             </div>
           ))}
@@ -52,6 +55,6 @@ const PastCallsDashboard = () => {
       )}
     </div>
   );
-}
+};
 
 export default PastCallsDashboard;

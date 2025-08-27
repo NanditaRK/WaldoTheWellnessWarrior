@@ -1,0 +1,18 @@
+
+services:
+  backend:
+    build: ./python-voice-agent
+    ports:
+      - "5001:5000"
+    env_file:
+      - ./python-voice-agent/.env
+
+  
+  frontend:
+    build: ./react-voice-agent
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    env_file:
+      - ./react-voice-agent/.env

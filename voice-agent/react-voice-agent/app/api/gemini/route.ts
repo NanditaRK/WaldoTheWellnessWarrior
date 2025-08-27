@@ -8,17 +8,14 @@ export async function POST(req: Request) {
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(
         { error: "Missing GEMINI_API_KEY" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
-    
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-    
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-   
     const result = await model.generateContent(prompt);
 
     const summary = result.response.text() || "No summary generated.";
@@ -28,7 +25,7 @@ export async function POST(req: Request) {
     console.error("Gemini API handler error:", err);
     return NextResponse.json(
       { error: "Failed to summarize transcript" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

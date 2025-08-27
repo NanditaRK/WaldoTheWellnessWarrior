@@ -1,24 +1,28 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState, useRef } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import React, { useEffect, useState, useRef } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import {
   type AgentState,
   type ReceivedChatMessage,
   useRoomContext,
   useVoiceAssistant,
-} from '@livekit/components-react';
-import { toastAlert } from '@/components/alert-toast';
-import { AgentControlBar } from '@/components/livekit/agent-control-bar/agent-control-bar';
-import { ChatEntry } from '@/components/livekit/chat/chat-entry';
-import { MediaTiles } from '@/components/livekit/media-tiles';
-import useChatAndTranscription from '@/hooks/useChatAndTranscription';
-import { useDebugMode } from '@/hooks/useDebug';
-import type { AppConfig } from '@/lib/types';
-import { cn } from '@/lib/utils';
+} from "@livekit/components-react";
+import { toastAlert } from "@/components/alert-toast";
+import { AgentControlBar } from "@/components/livekit/agent-control-bar/agent-control-bar";
+import { ChatEntry } from "@/components/livekit/chat/chat-entry";
+import { MediaTiles } from "@/components/livekit/media-tiles";
+import useChatAndTranscription from "@/hooks/useChatAndTranscription";
+import { useDebugMode } from "@/hooks/useDebug";
+import type { AppConfig } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 function isAgentAvailable(agentState: AgentState) {
-  return agentState === 'listening' || agentState === 'thinking' || agentState === 'speaking';
+  return (
+    agentState === "listening" ||
+    agentState === "thinking" ||
+    agentState === "speaking"
+  );
 }
 
 interface SessionViewProps {
@@ -34,7 +38,7 @@ export const SessionView = ({
   sessionStarted,
   className,
   ref,
-}: React.ComponentProps<'div'> & SessionViewProps) => {
+}: React.ComponentProps<"div"> & SessionViewProps) => {
   const { state: agentState } = useVoiceAssistant();
   const [chatOpen, setChatOpen] = useState(true);
   const { messages, send } = useChatAndTranscription();
@@ -42,7 +46,7 @@ export const SessionView = ({
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useDebugMode({
-    enabled: process.env.NODE_END !== 'production',
+    enabled: process.env.NODE_END !== "production",
   });
 
   async function handleSendMessage(message: string) {
@@ -51,7 +55,7 @@ export const SessionView = ({
 
   // auto-scroll to latest message
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
@@ -59,15 +63,15 @@ export const SessionView = ({
       const timeout = setTimeout(() => {
         if (!isAgentAvailable(agentState)) {
           const reason =
-            agentState === 'connecting'
-              ? 'Agent did not join the room.'
-              : 'Agent connected but did not complete initializing.';
+            agentState === "connecting"
+              ? "Agent did not join the room."
+              : "Agent connected but did not complete initializing.";
 
           toastAlert({
-            title: 'Session ended',
+            title: "Session ended",
             description: (
               <p className="w-full">
-                {reason}{' '}
+                {reason}{" "}
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
@@ -100,8 +104,8 @@ export const SessionView = ({
       ref={ref}
       inert={disabled}
       className={cn(
-        'flex flex-col h-svh bg-background rounded-xl shadow-lg transition-all duration-500 ease-out',
-        className
+        "flex flex-col h-svh bg-background rounded-xl shadow-lg transition-all duration-500 ease-out",
+        className,
       )}
     >
       {/* Split Screen: Media Left | Chat Right */}
@@ -121,7 +125,7 @@ export const SessionView = ({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
                 >
                   <div className="rounded-lg bg-muted p-3 whitespace-pre-wrap break-words">
                     <ChatEntry entry={message} />
@@ -138,12 +142,16 @@ export const SessionView = ({
       <div className="bg-background sticky bottom-0 z-50 px-3 pt-2 pb-3 md:px-12 md:pb-6 shadow-[0_-2px_8px_rgba(0,0,0,0.1)]">
         <motion.div
           key="control-bar"
-          initial={{ opacity: 0, translateY: '100%' }}
+          initial={{ opacity: 0, translateY: "100%" }}
           animate={{
             opacity: sessionStarted ? 1 : 0,
-            translateY: sessionStarted ? '0%' : '100%',
+            translateY: sessionStarted ? "0%" : "100%",
           }}
-          transition={{ duration: 0.3, delay: sessionStarted ? 0.3 : 0, ease: 'easeOut' }}
+          transition={{
+            duration: 0.3,
+            delay: sessionStarted ? 0.3 : 0,
+            ease: "easeOut",
+          }}
         >
           <div className="relative z-10 mx-auto w-full max-w-2xl">
             <AgentControlBar

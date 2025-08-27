@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { MicrophoneIcon } from '@phosphor-icons/react';
+import { Button } from "@/components/ui/button";
+import { MicrophoneIcon } from "@phosphor-icons/react";
 
 interface WelcomeProps {
   disabled: boolean;
@@ -12,7 +12,7 @@ export const Welcome = ({
   startButtonText,
   onStartCall,
   ref,
-}: React.ComponentProps<'div'> & WelcomeProps) => {
+}: React.ComponentProps<"div"> & WelcomeProps) => {
   return (
     <div
       ref={ref}
@@ -34,12 +34,16 @@ export const Welcome = ({
       </svg> */}
 
       <p className="text-fg1 max-w-prose pt-1 leading-6 font-medium">
-        <MicrophoneIcon width={"64px"} height={"64px"}/>
+        <MicrophoneIcon width={"64px"} height={"64px"} />
       </p>
-      <Button variant="default" size="lg" onClick={onStartCall} className="mt-6 w-32 bg-black hover:bg-gray-700 dark:bg-primary font-mono">
+      <Button
+        variant="default"
+        size="lg"
+        onClick={onStartCall}
+        className="mt-6 w-32 bg-black hover:bg-gray-700 dark:bg-primary font-mono"
+      >
         {startButtonText}
       </Button>
-     
     </div>
   );
 };
